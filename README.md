@@ -48,10 +48,6 @@ Things I plan to showcase:
 - Full-stack builds
 -->
 
-## 📬 Let’s Connect
-**LinkedIn:** https://www.linkedin.com/in/subharup-nandi-776293353/  
-**Email:** subharupn@gmail.com  
-
 ---
 
 ## 🧠 Current Focus
