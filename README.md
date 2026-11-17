@@ -12,4 +12,5 @@
 
 <p align="center">
 <a href="https://github.com/subhwastaken">github.com/subhwastaken</a> &nbsp;/&nbsp; <a href="https://subhwastaken.github.io/subhwastaken/game/">play ship it!</a>
+<img src="https://komarev.com/ghpvc/?username=subhwastaken&style=flat-square" width="1" height="1" alt="" />
 </p>
