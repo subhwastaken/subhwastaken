@@ -199,6 +199,11 @@
       font-family: inherit;
       font-size: 11px;
     }
+    kbd.qblock {
+      background: var(--yellow);
+      border-color: var(--ink);
+      font-weight: 600;
+    }
     .actions { display: flex; gap: 14px; align-items: center; }
     button {
       background: var(--ink);
@@ -313,13 +318,13 @@
       <button type="button" class="touch-btn duck" id="duckBtn">↓ DUCK</button>
       <button type="button" class="touch-btn jump" id="jumpBtn">↑ JUMP ×2</button>
     </div>
-    <div class="mobile-hint">Tap JUMP ×2 for Double Jump · Hold DUCK · Bump ? Blocks</div>
+    <div class="mobile-hint">Tap JUMP ×2 for Double Jump · Hold DUCK · Bump <kbd class="qblock">?</kbd> Blocks</div>
 
     <div class="controls">
       <div class="keys">
         <span><kbd>Space</kbd> / <kbd>↑</kbd> / <kbd>Click</kbd> Jump (2× Double Jump) &amp; Stomp BUGs</span>
         <span><kbd>↓</kbd> / <kbd>S</kbd> Duck / Drop</span>
-        <span>Bump <kbd>?</kbd> Blocks · Land on Pipes</span>
+        <span>Bump <kbd class="qblock">?</kbd> Blocks · Land on Pipes</span>
       </div>
       <div class="actions">
         <button id="restartBtn">Restart</button>
