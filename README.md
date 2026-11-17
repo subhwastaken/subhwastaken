@@ -11,5 +11,5 @@
 </div>
 
 <p align="center">
-<a href="https://github.com/subhwastaken">github.com/subhwastaken</a> &nbsp;/&nbsp; <a href="https://subhwastaken.github.io/subhwastaken/game/">play ship it!</a> &nbsp;/&nbsp; <img src="https://komarev.com/ghpvc/?username=subhwastaken&label=PROFILE+VIEWS&color=2f55ff&style=flat-square" alt="Profile Views" />
+<a href="https://github.com/subhwastaken">github.com/subhwastaken</a> &nbsp;/&nbsp; <a href="https://subhwastaken.github.io/subhwastaken/game/">play ship it!</a>
 </p>
