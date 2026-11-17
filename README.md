@@ -1,64 +1,15 @@
-# ⭐ Hi, I’m Subharup  
-<img src="https://readme-typing-svg.herokuapp.com?font=Plus+Jakarta+Sans&size=22&duration=3000&pause=800&color=1E90FF&center=true&vCenter=true&width=650&lines=AI+Automation+%E2%80%A2+GenAI+%E2%80%A2+RAG+%E2%80%A2+LLMs+%E2%80%A2+Full-Stack+Engineering" />
+<!-- Every card is an animated SVG drawn by scripts/render_readme_cards.py and refreshed daily
+     by .github/workflows/update-profile-art.yml.
+     Spacing is baked into the SVGs, so keep this block free of blank lines and keep the cards in
+     a row on one line with no spaces between them. -->
+<div align="center">
+<a href="https://github.com/subhwastaken"><img src="./cards/hero.svg" width="100%" alt="Subharup Nandi. AI & Full-Stack Engineer building AI automation, RAG pipelines, and full-stack systems." /></a><br>
+<img src="./cards/heatmap.svg" width="100%" alt="Subharup's contribution graph, in blue, refreshed daily" /><br>
+<img src="./cards/activity.svg" width="100%" alt="Contributions in the last 12 months, by month, with streak and busiest day" /><br>
+<img src="./cards/techstack.svg" width="100%" alt="Tech Stack & Toolkit: Python, Rust, FastAPI, LLMs & RAG, TypeScript, Next.js, React, Node.js, PostgreSQL, Docker, SvelteKit, TailwindCSS, MongoDB, Redis, Express, GitHub Actions" /><br>
+<a href="https://subhwastaken.github.io/subhwastaken/game/"><img src="./cards/game.svg" width="66.666%" alt="Play Ship It! Endless Runner" /></a><a href="https://github.com/subhwastaken"><img src="./cards/views.svg" width="33.333%" alt="Profile Views" /></a>
+</div>
 
-I love building things that automate the boring, enhance intelligence, and feel magical.  
-My work revolves around AI automation, RAG pipelines, LLM-powered systems, and scalable full-stack applications.
-
-If an idea excites me, I ship it.
-
----
-
-## 🚀 Tech Stack
-
-### **AI & Backend**
-Python · FastAPI · Node.js · Express  
-RAG · LLMs · Pinecone · Vector Search
-
-### **Frontend**
-React · Next.js · TailwindCSS  
-HTML · CSS · JavaScript
-
-### **Databases**
-MySQL · MongoDB
-
----
-
-## 🎯 What I Do
-- Build AI automation tools  
-- Create RAG + LLM-powered applications  
-- Develop full-stack projects end-to-end  
-- Explore new ways to merge engineering with intelligence
-
----
-
-## ✨ Fun Facts About Me
-- I love anime  
-- Gym 3× a week  
-- Automation fascinates me  
-- A fast prototyper — I build first, improve rapidly later  
-
----
-
-<!-- 📌 Pinned Work (commented as requested)
-(Will show up automatically when you pin repos)
-Things I plan to showcase:
-- AI tools
-- RAG systems
-- Automation workflows
-- Full-stack builds
--->
-
----
-
-## 🧠 Current Focus
-- Building reliable, production-ready AI systems  
-- Deepening my knowledge of GenAI concepts  
-- Strengthening full-stack fundamentals  
-- Creating projects that feel genuinely “smart”
-
----
-
-## 🔥 My Goal
-Become a developer who can:  
-**Design → Build → Automate → Ship**  
-using AI + full-stack engineering.
+<p align="center">
+<a href="https://github.com/subhwastaken">github.com/subhwastaken</a> &nbsp;/&nbsp; <a href="https://subhwastaken.github.io/subhwastaken/game/">play ship it!</a> &nbsp;/&nbsp; <img src="https://komarev.com/ghpvc/?username=subhwastaken&label=PROFILE+VIEWS&color=2f55ff&style=flat-square" alt="Profile Views" />
+</p>

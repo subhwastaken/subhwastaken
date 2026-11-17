@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ship It! — @subhwastaken</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --paper: #f3f3f1;
+      --paper-deep: #e6e6e1;
+      --ink: #111111;
+      --muted: #6e6e73;
+      --rule: #dcdcd7;
+      --blue: #2f55ff;
+      --red: #ef3b2d;
+      --yellow: #ffc81a;
+      --green: #16a34a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #0d1117;
+      color: var(--ink);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .shell {
+      width: 100%;
+      max-width: 920px;
+      background: var(--paper);
+      border-radius: 16px;
+      padding: 24px 28px 26px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .mac-dots {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .mac-dots i {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .mac-dots i:nth-child(1) { background: #ff5f56; }
+    .mac-dots i:nth-child(2) { background: #ffbd2e; }
+    .mac-dots i:nth-child(3) { background: #27c93f; }
+    h1 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-weight: 400;
+      font-size: 40px;
+      line-height: 1.05;
+      margin: 4px 0 0;
+      letter-spacing: -0.02em;
+    }
+    h1 em { color: var(--blue); font-style: italic; }
+    .hud {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: var(--ink);
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .hud-hi { color: #9ca3af; }
+    .hud-score { color: var(--yellow); }
+    .hud-shield {
+      color: #60a5fa;
+      border-left: 1px solid #30363d;
+      padding-left: 12px;
+      font-size: 12px;
+      display: none;
+    }
+    .hud-shield.on { display: inline; }
+    .arena-wrap {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--rule);
+      background: var(--paper-deep);
+      cursor: pointer;
+    }
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(243, 243, 241, 0.84);
+      backdrop-filter: blur(2px);
+      text-align: center;
+      padding: 20px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .overlay.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .overlay h2 {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-size: 52px;
+      font-weight: 400;
+      margin: 0;
+      line-height: 1;
+    }
+    .overlay h2 em { color: var(--red); font-style: italic; }
+    .overlay p {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--muted);
+      margin: 10px 0 18px;
+    }
+    .toast {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-8px);
+      background: var(--ink);
+      color: var(--yellow);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      opacity: 0;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      pointer-events: none;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .controls {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .keys { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+    kbd {
+      background: #ffffff;
+      border: 1px solid var(--rule);
+      border-radius: 5px;
+      padding: 2px 7px;
+      color: var(--ink);
+      font-family: inherit;
+      font-size: 11px;
+    }
+    .actions { display: flex; gap: 14px; align-items: center; }
+    button {
+      background: var(--ink);
+      color: #ffffff;
+      border: 0;
+      border-radius: 7px;
+      padding: 8px 15px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    button:hover { background: var(--blue); }
+    a.back {
+      color: var(--blue);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    a.back:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="topbar">
+      <div>
+        <div class="eyebrow"><span class="mac-dots"><i></i><i></i><i></i></span> ARCADE · SHIP IT!</div>
+        <h1>Ship <em>It!</em></h1>
+      </div>
+      <div class="hud">
+        <span class="hud-hi">HI <span id="hiVal">0000</span></span>
+        <span class="hud-score" id="scoreVal">0000</span>
+        <span class="hud-shield" id="shieldBadge">★ STAR SHIELD</span>
+      </div>
+    </div>
+
+    <div class="arena-wrap" id="arena">
+      <canvas id="game" width="860" height="320"></canvas>
+      <div class="toast" id="toast">SHIPPED v1.0!</div>
+      <div class="overlay" id="overlay">
+        <h2>Deploy <em>Crashed</em></h2>
+        <p id="overStats">Press Space, Click, or R to ship again</p>
+        <button id="playAgainBtn">Ship Again (Space)</button>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="keys">
+        <span><kbd>Space</kbd> / <kbd>↑</kbd> / <kbd>Click</kbd> Jump &amp; Stomp BUGs</span>
+        <span><kbd>↓</kbd> / <kbd>S</kbd> Duck / Drop</span>
+        <span>Bump <kbd>?</kbd> Blocks · Land on Pipes</span>
+      </div>
+      <div class="actions">
+        <button id="restartBtn">Restart</button>
+        <a class="back" href="https://github.com/subhwastaken">← Back to @subhwastaken on GitHub</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('game');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('scoreVal');
+    const hiEl = document.getElementById('hiVal');
+    const shieldEl = document.getElementById('shieldBadge');
+    const overlay = document.getElementById('overlay');
+    const overStats = document.getElementById('overStats');
+    const toast = document.getElementById('toast');
+
+    const W = canvas.width, H = canvas.height;
+    const GROUND_Y = 268;
+    const GOOMBA_LABELS = ['BUG', '404', '500'];
+    const SKY_TAGS = ['</>', 'git push', 'v2.4', '200 OK', 'SHIPPED', 'npm run'];
+
+    let hiScore = Number(localStorage.getItem('subh_shipit_hi') || 0);
+    hiEl.textContent = String(Math.floor(hiScore)).padStart(4, '0');
+
+    let score = 0;
+    let speed = 5.6;
+    let gameOver = false;
+    let beatHiThisRun = hiScore === 0;
+    let shieldUntil = 0;
+    let nextMilestone = 300;
+    let version = 1;
+    let spawnDist = 190;
+    let groundOffset = 0;
+
+    const player = {
+      x: 96,
+      y: GROUND_Y - 38,
+      w: 36,
+      h: 38,
+      vy: 0,
+      jumpsLeft: 2,
+      ducking: false,
+      legPhase: 0,
+    };
+
+    let enemies = [];     // Goomba-style BUGs + Green Warp Pipes
+    let blocks = [];      // Overhead Brick & [?] Mystery Blocks
+    let coins = [];       // Floating & popped coins
+    let particles = [];
+    let clouds = SKY_TAGS.map((txt, i) => ({
+      x: 110 + i * 150,
+      y: 44 + (i % 3) * 28,
+      txt,
+      spd: 0.65 + (i % 2) * 0.3,
+    }));
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1400);
+    }
+
+    function spawnParticles(x, y, color, count) {
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x,
+          y,
+          vx: (Math.random() - 0.5) * 5.5 - 1,
+          vy: (Math.random() - 0.85) * 4.5,
+          life: 1,
+          color,
+          size: 3 + Math.random() * 4,
+        });
+      }
+    }
+
+    function jump() {
+      if (gameOver) {
+        resetGame();
+        return;
+      }
+      if (player.jumpsLeft > 0) {
+        const isDouble = player.jumpsLeft === 1;
+        player.vy = isDouble ? -11.4 : -12.8;
+        player.jumpsLeft -= 1;
+        player.ducking = false;
+        spawnParticles(player.x + player.w / 2, player.y + player.h, isDouble ? '#ffc81a' : '#2f55ff', 8);
+      }
+    }
+
+    function resetGame() {
+      score = 0;
+      speed = 5.6;
+      gameOver = false;
+      beatHiThisRun = hiScore === 0;
+      shieldUntil = 0;
+      nextMilestone = 300;
+      version = 1;
+      spawnDist = 190;
+      enemies = [];
+      blocks = [];
+      coins = [];
+      particles = [];
+      player.y = GROUND_Y - 38;
+      player.h = 38;
+      player.vy = 0;
+      player.jumpsLeft = 2;
+      player.ducking = false;
+      overlay.classList.remove('show');
+      shieldEl.classList.remove('on');
+      scoreEl.textContent = '0000';
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (['Space', ' ', 'ArrowUp', 'ArrowDown'].includes(e.key)) {
+        e.preventDefault();
+      }
+      if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
+        if (!e.repeat) jump();
+      }
+      if (e.code === 'ArrowDown' || e.code === 'KeyS') {
+        player.ducking = true;
+        if (player.y + player.h < GROUND_Y) player.vy = Math.max(player.vy, 9);
+      }
+      if (e.code === 'KeyR') resetGame();
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.code === 'ArrowDown' || e.code === 'KeyS') {
+        player.ducking = false;
+      }
+    });
+
+    document.getElementById('arena').addEventListener('pointerdown', (e) => {
+      if (e.target.tagName !== 'BUTTON') jump();
+    });
+    document.getElementById('restartBtn').addEventListener('click', resetGame);
+    document.getElementById('playAgainBtn').addEventListener('click', resetGame);
+
+    function makeEnemy(x) {
+      const label = GOOMBA_LABELS[Math.floor(Math.random() * GOOMBA_LABELS.length)];
+      const ai = label === 'BUG' ? 'patrol' : label === '404' ? 'hopper' : 'sprinter';
+      return {
+        type: 'goomba',
+        ai,
+        x,
+        y: GROUND_Y - 32,
+        w: 40,
+        h: 32,
+        vx: ai === 'patrol' ? -3.0 : ai === 'hopper' ? -2.4 : -1.0,
+        vy: 0,
+        timer: 0.35 + Math.random() * 0.45,
+        walkPhase: Math.random() * 6,
+        label,
+      };
+    }
+
+    function spawnSegment() {
+      const startX = W + 40;
+      const roll = Math.random();
+
+      if (roll < 0.32) {
+        // A) Clear Bonus Block Zone ([Brick][?][Brick] or single [?]) with ZERO ground enemies
+        const by = GROUND_Y - 94;
+        if (Math.random() < 0.65) {
+          ['brick', 'mystery', 'brick'].forEach((kind, idx) => {
+            blocks.push({
+              x: startX + idx * 40,
+              y: by,
+              w: 38,
+              h: 28,
+              kind,
+              used: false,
+              bump: 0,
+            });
+          });
+        } else {
+          blocks.push({
+            x: startX,
+            y: by,
+            w: 38,
+            h: 28,
+            kind: 'mystery',
+            used: false,
+            bump: 0,
+          });
+        }
+        spawnDist = 220 + Math.random() * 60 + speed * 6;
+      } else if (roll < 0.72) {
+        // B) Single fast Red Enemy on open ground (balanced spacing)
+        enemies.push(makeEnemy(startX));
+        spawnDist = 225 + Math.random() * 85 + speed * 6;
+      } else {
+        // C) Green Pipe with floating coins above it (no ground enemies nearby)
+        const pipeH = 44 + Math.floor(Math.random() * 14);
+        enemies.push({
+          type: 'pipe',
+          x: startX,
+          y: GROUND_Y - pipeH,
+          w: 48,
+          h: pipeH,
+          label: 'PIPE',
+        });
+        coins.push({ x: startX + 24, y: GROUND_Y - pipeH - 44, r: 12, vy: 0, popped: false });
+        coins.push({ x: startX + 64, y: GROUND_Y - pipeH - 44, r: 12, vy: 0, popped: false });
+        spawnDist = 230 + Math.random() * 60 + speed * 6;
+      }
+    }
+
+    let lastTime = performance.now();
+
+    function update(dt) {
+      if (gameOver) return;
+      const step = dt * 60;
+      const now = performance.now();
+
+      speed = Math.min(10.8, speed + 0.0015 * step);
+      score += 0.2 * speed * step;
+      const curScore = Math.floor(score);
+      scoreEl.textContent = String(curScore).padStart(4, '0');
+      if (curScore > hiScore) {
+        if (!beatHiThisRun && hiScore > 0) {
+          beatHiThisRun = true;
+          showToast('NEW HIGH SCORE! ★');
+        }
+        hiScore = curScore;
+        hiEl.textContent = String(hiScore).padStart(4, '0');
+        localStorage.setItem('subh_shipit_hi', String(hiScore));
+      }
+
+      if (score >= nextMilestone) {
+        version += 1;
+        nextMilestone += 300;
+        showToast(`SHIPPED v${version}.0!`);
+      }
+
+      if (now < shieldUntil) {
+        shieldEl.classList.add('on');
+      } else {
+        shieldEl.classList.remove('on');
+      }
+
+      const prevBottom = player.y + player.h;
+      const prevTop = player.y;
+
+      const targetH = player.ducking && player.y + player.h >= GROUND_Y - 2 ? 22 : 38;
+      if (player.h !== targetH) {
+        player.y += player.h - targetH;
+        player.h = targetH;
+      }
+
+      player.vy += 0.6 * step;
+      player.y += player.vy * step;
+      let grounded = false;
+
+      if (player.y + player.h >= GROUND_Y) {
+        player.y = GROUND_Y - player.h;
+        player.vy = 0;
+        grounded = true;
+      }
+
+      player.legPhase += 0.24 * step;
+      groundOffset = (groundOffset + speed * step) % 38;
+      clouds.forEach((c) => {
+        c.x -= c.spd * step;
+        if (c.x < -80) c.x = W + 60;
+      });
+
+      spawnDist -= speed * step;
+      if (spawnDist <= 0) spawnSegment();
+
+      // Platform blocks: land on top OR bump from below
+      for (let i = blocks.length - 1; i >= 0; i--) {
+        const b = blocks[i];
+        b.x -= speed * step;
+        if (b.bump < 0) b.bump = Math.min(0, b.bump + 1.2 * step);
+
+        const horiz = player.x + player.w - 6 > b.x && player.x + 6 < b.x + b.w;
+        const vert = player.y + player.h > b.y && player.y < b.y + b.h;
+        if (horiz) {
+          // One-way platform: land on top of both bricks & [?] blocks
+          if (player.vy >= 0 && prevBottom <= b.y + 16 && player.y + player.h >= b.y) {
+            player.y = b.y - player.h;
+            player.vy = 0;
+            grounded = true;
+          }
+          // Bricks are one-way from below (pass right through); yellow [?] blocks trigger cleanly!
+          else if (b.kind === 'mystery' && !b.used && vert) {
+            if (player.vy < 0) player.vy = Math.max(player.vy, -1.2);
+            b.bump = -9;
+            b.used = true;
+            score += 100;
+            shieldUntil = now + 3500;
+            coins.push({ x: b.x + b.w / 2, y: b.y - 14, r: 12, vy: -7, popped: true });
+            spawnParticles(b.x + b.w / 2, b.y, '#ffc81a', 12);
+            showToast('? BLOCK +100 ★');
+          }
+        }
+        if (b.x + b.w < -60) blocks.splice(i, 1);
+      }
+
+      // Enemies & Pipes
+      const px = player.x + 6;
+      const py = player.y + 5;
+      const pw = player.w - 12;
+      const ph = player.h - 8;
+
+      for (let i = enemies.length - 1; i >= 0; i--) {
+        const ob = enemies[i];
+        ob.x -= speed * step;
+
+        if (ob.type === 'goomba') {
+          ob.walkPhase = (ob.walkPhase || 0) + 0.42 * step;
+          if (ob.ai === 'patrol') {
+            ob.timer -= dt;
+            if (ob.timer <= 0) {
+              ob.vx = ob.vx < 0 ? 1.4 : -3.2;
+              ob.timer = 0.4 + Math.random() * 0.45;
+            }
+          } else if (ob.ai === 'hopper') {
+            ob.timer -= dt;
+            if (ob.timer <= 0 && ob.y + ob.h >= GROUND_Y - 1) {
+              ob.vy = -7.6;
+              ob.timer = 0.55 + Math.random() * 0.35;
+            }
+            ob.vy += 0.4 * step;
+            ob.y += ob.vy * step;
+            if (ob.y + ob.h >= GROUND_Y) {
+              ob.y = GROUND_Y - ob.h;
+              ob.vy = 0;
+            }
+          } else if (ob.ai === 'sprinter') {
+            const distToPlayer = ob.x - (player.x + player.w);
+            ob.vx = distToPlayer > 0 && distToPlayer < 420 ? -4.2 : -1.0;
+          }
+
+          ob.x += ob.vx * step;
+
+          // Keep moving enemies 85px+ away from any [?] block zone or pipe
+          for (const b of blocks) {
+            const gap = Math.max(b.x - (ob.x + ob.w), ob.x - (b.x + b.w));
+            if (gap < 85) {
+              if (ob.x + ob.w / 2 > b.x + b.w / 2) {
+                ob.vx = Math.max(0.9, Math.abs(ob.vx));
+                ob.x = b.x + b.w + 85;
+              } else {
+                ob.vx = -Math.max(0.9, Math.abs(ob.vx));
+                ob.x = b.x - ob.w - 85;
+              }
+            }
+          }
+          for (const p of enemies) {
+            if (p !== ob && p.type === 'pipe') {
+              const gap = Math.max(p.x - (ob.x + ob.w), ob.x - (p.x + p.w));
+              if (gap < 65) {
+                if (ob.x + ob.w / 2 > p.x + p.w / 2) {
+                  ob.vx = Math.max(0.9, Math.abs(ob.vx));
+                  ob.x = p.x + p.w + 65;
+                } else {
+                  ob.vx = -Math.max(0.9, Math.abs(ob.vx));
+                  ob.x = p.x - ob.w - 65;
+                }
+              }
+            }
+          }
+        }
+
+        if (ob.type === 'pipe') {
+          const horiz = player.x + player.w - 5 > ob.x && player.x + 5 < ob.x + ob.w;
+          if (horiz && player.vy >= 0 && prevBottom <= ob.y + 18 && player.y + player.h >= ob.y) {
+            player.y = ob.y - player.h;
+            player.vy = 0;
+            grounded = true;
+            continue;
+          }
+        }
+
+        const ox = ob.x + 5;
+        const oy = ob.y + 5;
+        const ow = ob.w - 10;
+        const oh = ob.h - 6;
+
+        if (px < ox + ow && px + pw > ox && py < oy + oh && py + ph > oy) {
+          // Goomba stomp check: falling onto top half of BUG enemy
+          if (ob.type === 'goomba' && player.vy > 0 && prevBottom <= ob.y + 22) {
+            score += 100;
+            player.vy = -10.8;
+            player.jumpsLeft = 2;
+            spawnParticles(ob.x + ob.w / 2, ob.y + ob.h / 2, '#ef3b2d', 14);
+            enemies.splice(i, 1);
+            showToast('STOMP! +100');
+            continue;
+          }
+
+          if (now < shieldUntil) {
+            shieldUntil = 0;
+            spawnParticles(ob.x + ob.w / 2, ob.y + ob.h / 2, '#ffc81a', 14);
+            enemies.splice(i, 1);
+            showToast('STAR SMASH!');
+            continue;
+          }
+
+          gameOver = true;
+          if (score > hiScore) {
+            hiScore = Math.floor(score);
+            localStorage.setItem('subh_shipit_hi', String(hiScore));
+            hiEl.textContent = String(hiScore).padStart(4, '0');
+          }
+          overStats.textContent = `Hit ${ob.label} · Score ${Math.floor(score)} · Best ${hiScore}`;
+          overlay.classList.add('show');
+          spawnParticles(player.x + player.w / 2, player.y + player.h / 2, '#ef3b2d', 16);
+          return;
+        }
+        if (ob.x + ob.w < -60) enemies.splice(i, 1);
+      }
+
+      if (grounded) player.jumpsLeft = 2;
+
+      // Coins
+      for (let i = coins.length - 1; i >= 0; i--) {
+        const c = coins[i];
+        c.x -= speed * step;
+        if (c.popped) {
+          c.y += c.vy * step;
+          c.vy += 0.35 * step;
+          if (c.vy > 4) {
+            coins.splice(i, 1);
+            continue;
+          }
+        } else {
+          const dist = Math.hypot((player.x + player.w / 2) - c.x, (player.y + player.h / 2) - c.y);
+          if (dist < c.r + 24) {
+            score += 50;
+            spawnParticles(c.x, c.y, '#ffc81a', 10);
+            showToast('+50 COIN');
+            coins.splice(i, 1);
+            continue;
+          }
+        }
+        if (c.x < -30) coins.splice(i, 1);
+      }
+
+      // Particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const pt = particles[i];
+        pt.x += pt.vx * step;
+        pt.y += pt.vy * step;
+        pt.vy += 0.2 * step;
+        pt.life -= 0.03 * step;
+        if (pt.life <= 0) particles.splice(i, 1);
+      }
+    }
+
+    function draw() {
+      ctx.fillStyle = '#e6e6e1';
+      ctx.fillRect(0, 0, W, H);
+
+      ctx.font = '12px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#b5b5ad';
+      clouds.forEach((c) => ctx.fillText(c.txt, c.x, c.y));
+
+      // Ground
+      ctx.strokeStyle = '#111111';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(0, GROUND_Y);
+      ctx.lineTo(W, GROUND_Y);
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(110, 110, 115, 0.45)';
+      for (let x = -groundOffset; x < W; x += 38) {
+        ctx.fillRect(x, GROUND_Y + 12, 16, 2);
+      }
+
+      // Overhead Mario Blocks
+      blocks.forEach((b) => {
+        const by = b.y + b.bump;
+        if (b.kind === 'mystery') {
+          ctx.fillStyle = b.used ? '#a1a1aa' : '#ffc81a';
+        } else {
+          ctx.fillStyle = '#b45309';
+        }
+        ctx.beginPath();
+        ctx.roundRect(b.x, by, b.w, b.h, 5);
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#111111';
+        ctx.stroke();
+
+        if (b.kind === 'mystery' && !b.used) {
+          ctx.fillStyle = '#111111';
+          ctx.font = '600 15px "JetBrains Mono", monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText('?', b.x + b.w / 2, by + 19);
+          ctx.textAlign = 'left';
+        } else if (b.kind === 'brick') {
+          ctx.beginPath();
+          ctx.moveTo(b.x + 2, by + b.h / 2);
+          ctx.lineTo(b.x + b.w - 2, by + b.h / 2);
+          ctx.stroke();
+        }
+      });
+
+      // Coins
+      coins.forEach((c) => {
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, c.r, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffc81a';
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#111111';
+        ctx.stroke();
+        ctx.fillStyle = '#111111';
+        ctx.font = '600 9px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText('★', c.x, c.y + 3);
+        ctx.textAlign = 'left';
+      });
+
+      // Enemies & Pipes
+      enemies.forEach((ob) => {
+        if (ob.type === 'pipe') {
+          ctx.fillStyle = '#16a34a';
+          ctx.fillRect(ob.x + 4, ob.y + 12, ob.w - 8, ob.h - 12);
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = '#111111';
+          ctx.strokeRect(ob.x + 4, ob.y + 12, ob.w - 8, ob.h - 12);
+
+          ctx.fillStyle = '#15803d';
+          ctx.beginPath();
+          ctx.roundRect(ob.x, ob.y, ob.w, 13, 3);
+          ctx.fill();
+          ctx.stroke();
+        } else {
+          // Goomba-style BUG
+          ctx.fillStyle = '#ef3b2d';
+          ctx.beginPath();
+          ctx.roundRect(ob.x, ob.y, ob.w, ob.h - 4, 8);
+          ctx.fill();
+          ctx.lineWidth = 2;
+          ctx.strokeStyle = '#111111';
+          ctx.stroke();
+
+          const foot = Math.sin(ob.walkPhase || 0) * 2.5;
+          ctx.fillStyle = '#111111';
+          ctx.fillRect(ob.x + 6, ob.y + ob.h - 5 - Math.max(0, foot), 8, 5);
+          ctx.fillRect(ob.x + ob.w - 14, ob.y + ob.h - 5 - Math.max(0, -foot), 8, 5);
+
+          ctx.fillStyle = '#ffffff';
+          ctx.font = '600 11px "JetBrains Mono", monospace';
+          ctx.textAlign = 'center';
+          ctx.fillText(ob.label, ob.x + ob.w / 2, ob.y + 18);
+          ctx.textAlign = 'left';
+        }
+      });
+
+      // Player
+      const hasShield = performance.now() < shieldUntil;
+      if (hasShield) {
+        ctx.beginPath();
+        ctx.arc(player.x + player.w / 2, player.y + player.h / 2, 28, 0, Math.PI * 2);
+        ctx.strokeStyle = '#ffc81a';
+        ctx.lineWidth = 3;
+        ctx.stroke();
+      }
+
+      ctx.fillStyle = '#2f55ff';
+      ctx.beginPath();
+      ctx.roundRect(player.x, player.y, player.w, player.h - 6, 8);
+      ctx.fill();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.beginPath();
+      ctx.roundRect(player.x + 14, player.y + 7, 17, 9, 3);
+      ctx.fill();
+      ctx.fillStyle = '#111111';
+      ctx.beginPath();
+      ctx.arc(player.x + 26, player.y + 11.5, 2.2, 0, Math.PI * 2);
+      ctx.fill();
+
+      const onGround = player.y + player.h >= GROUND_Y - 1 || player.vy === 0;
+      const stepOffset = onGround ? Math.sin(player.legPhase) * 3 : 0;
+      ctx.fillStyle = '#111111';
+      ctx.fillRect(player.x + 7, player.y + player.h - 6 - Math.max(0, stepOffset), 7, 6);
+      ctx.fillRect(player.x + 22, player.y + player.h - 6 - Math.max(0, -stepOffset), 7, 6);
+
+      particles.forEach((pt) => {
+        ctx.globalAlpha = Math.max(0, pt.life);
+        ctx.fillStyle = pt.color;
+        ctx.fillRect(pt.x, pt.y, pt.size, pt.size);
+      });
+      ctx.globalAlpha = 1;
+    }
+
+    function loop(now) {
+      const dt = Math.min(0.05, (now - lastTime) / 1000);
+      lastTime = now;
+      update(dt);
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    draw();
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
