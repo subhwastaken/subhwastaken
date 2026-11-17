@@ -95,13 +95,21 @@
     .hud-hi { color: #9ca3af; }
     .hud-score { color: var(--yellow); }
     .hud-shield {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: var(--ink);
       color: #60a5fa;
-      border-left: 1px solid #30363d;
-      padding-left: 12px;
-      font-size: 12px;
-      display: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 999px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
     }
-    .hud-shield.on { display: inline; }
+    .hud-shield.on { opacity: 1; }
     .arena-wrap {
       position: relative;
       border-radius: 12px;
@@ -249,8 +257,17 @@
       transform: translateY(2px) scale(0.98);
       opacity: 0.9;
     }
+    .mobile-hint {
+      display: none;
+      margin-top: 8px;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+    }
     @media (hover: none) and (pointer: coarse), (max-width: 768px) {
       .touch-controls { display: flex; }
+      .mobile-hint { display: block; }
     }
     @media (max-width: 680px) {
       body { padding: 10px; }
@@ -258,11 +275,12 @@
       .topbar { gap: 10px; margin-bottom: 10px; }
       h1 { font-size: 30px; }
       .hud { padding: 8px 12px; font-size: 12px; gap: 10px; }
+      .hud-shield { top: 8px; right: 8px; font-size: 10px; padding: 4px 10px; }
       .overlay { padding: 12px; }
       .overlay h2 { font-size: 34px; }
       .overlay p { font-size: 11px; margin: 6px 0 12px; }
       .keys { display: none; }
-      .controls { margin-top: 12px; }
+      .controls { margin-top: 10px; }
       .actions { width: 100%; justify-content: space-between; }
     }
   </style>
@@ -277,13 +295,13 @@
       <div class="hud">
         <span class="hud-hi">HI <span id="hiVal">0000</span></span>
         <span class="hud-score" id="scoreVal">0000</span>
-        <span class="hud-shield" id="shieldBadge">★ STAR SHIELD</span>
       </div>
     </div>
 
     <div class="arena-wrap" id="arena">
       <canvas id="game" width="860" height="320"></canvas>
       <div class="toast" id="toast">SHIPPED v1.0!</div>
+      <div class="hud-shield" id="shieldBadge">★ STAR SHIELD</div>
       <div class="overlay" id="overlay">
         <h2>Deploy <em>Crashed</em></h2>
         <p id="overStats">Press Space, Click, or R to ship again</p>
@@ -293,12 +311,13 @@
 
     <div class="touch-controls" aria-label="Touch controls">
       <button type="button" class="touch-btn duck" id="duckBtn">↓ DUCK</button>
-      <button type="button" class="touch-btn jump" id="jumpBtn">↑ JUMP</button>
+      <button type="button" class="touch-btn jump" id="jumpBtn">↑ JUMP ×2</button>
     </div>
+    <div class="mobile-hint">Tap JUMP ×2 for Double Jump · Hold DUCK · Bump ? Blocks</div>
 
     <div class="controls">
       <div class="keys">
-        <span><kbd>Space</kbd> / <kbd>↑</kbd> / <kbd>Click</kbd> Jump &amp; Stomp BUGs</span>
+        <span><kbd>Space</kbd> / <kbd>↑</kbd> / <kbd>Click</kbd> Jump (2× Double Jump) &amp; Stomp BUGs</span>
         <span><kbd>↓</kbd> / <kbd>S</kbd> Duck / Drop</span>
         <span>Bump <kbd>?</kbd> Blocks · Land on Pipes</span>
       </div>
